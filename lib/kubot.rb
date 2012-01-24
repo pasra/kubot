@@ -1,5 +1,4 @@
-require "kubot/version"
+$:.unshift File.dirname(__FILE__)
 
-module Kubot
-  # Your code goes here...
-end
+require "kubot/version"
+require "kubot/config"

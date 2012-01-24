@@ -1,0 +1,15 @@
+a: hi
+b:
+  c:
+    foo: bar
+    hoge: huga
+  d:
+    - a
+    - b: c
+      d: e
+c:
+  - d: e
+    f: g
+  - h: i
+    j: k
+  - l
