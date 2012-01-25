@@ -38,6 +38,10 @@ Team Pasra
 
 ## License
 
+Files without any notice about license, the following license is applied:
+
+    MIT License
+
     (c) Shota Fukumori (sora_h) 2012
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -57,3 +61,5 @@ Team Pasra
       LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
       THE SOFTWARE.
+
+
