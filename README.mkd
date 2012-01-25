@@ -38,6 +38,11 @@ Team Pasra
 
 ## License
 
+The following classes in the file "lib/kubot/config.rb" is public domain:
+
+* `CustomHash` from <https://gist.github.com/1668637>
+* `CustomArray` from <https://gist.github.com/1668637>
+
 Files without any notice about license, the following license is applied:
 
     MIT License
