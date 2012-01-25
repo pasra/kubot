@@ -17,6 +17,10 @@ describe Kubot::Adapter do
       adapter.open
       called.should be_true
     end
+
+    it 'returns itself' do
+      (_ = Kubot::Adapter.new).open.should == _
+    end
   end
 
   describe "#close" do
@@ -36,6 +40,11 @@ describe Kubot::Adapter do
       end
       adapter.open; adapter.close
       called.should == 2
+    end
+
+    it 'returns itself' do
+      adapter = Kubot::Adapter.new
+      adapter.open; adapter.close.should == adapter
     end
   end
 
@@ -61,6 +70,10 @@ describe Kubot::Adapter do
       called_a.should be_true
       called_b.should be_true
     end
+
+    it 'returns itself' do
+      (_ = Kubot::Adapter.new).hook{|event, obj| }.should == _
+    end
   end
 
   describe "#fire" do
@@ -85,12 +98,23 @@ describe Kubot::Adapter do
       adapter.fire :hi, the: :option
       called.should be_true
     end
+
+    it 'returns itself' do
+      (_=Kubot::Adapter.new).fire(:yeah).should == _
+    end
   end
 
   describe "#say" do
     it 'accepts room, string, option' do
       adapter = Kubot::Adapter.new
+      adapter.open
       expect { adapter.say 'room', 'hi', the: :option }.to_not raise_error
+    end
+
+    it 'returns itself' do
+      adapter = Kubot::Adapter.new
+      adapter.open
+      adapter.say('room', 'hi').should == adapter
     end
   end
 end
