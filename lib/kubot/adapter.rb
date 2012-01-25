@@ -35,6 +35,7 @@ module Kubot
     end
 
     def say(room,voice,options={})
+      raise NotOpened unless @opened
       self
     end
 
