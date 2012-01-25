@@ -2,6 +2,7 @@ require 'yaml'
 
 module Kubot
   class Config
+    DEFAULT = {}
     def initialize(filename)
       @config = CustomHash[YAML.load_file(filename)]
     end
