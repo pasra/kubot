@@ -109,6 +109,14 @@ describe Kubot::Adapter do
       adapter = Kubot::Adapter.new
       adapter.open
       expect { adapter.say 'room', 'hi', the: :option }.to_not raise_error
+      expect { adapter.say 'room', 'hi' }.to_not raise_error
+    end
+
+    it 'raises error if not opened' do
+      adapter = Kubot::Adapter.new
+      expect { adapter.say 'room', 'hi' }.to raise_error
+      adapter.open
+      expect { adapter.say 'room', 'hi' }.to_not raise_error
     end
 
     it 'returns itself' do
