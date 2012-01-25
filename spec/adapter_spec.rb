@@ -63,6 +63,30 @@ describe Kubot::Adapter do
     end
   end
 
+  describe "#fire" do
+    it 'fires event and call hooks' do
+      adapter = Kubot::Adapter.new
+      called = false
+      adapter.hook {|event, obj| called = true; event.should == :hi }
+      adapter.fire :hi, the: :option
+      called.should be_true
+    end
+
+    it 'fires event with obj, and calls hooks with obj' do
+      adapter = Kubot::Adapter.new
+      called = false
+
+      adapter.hook do |event, obj|
+        called = true
+        event.should == :hi
+        obj[:the].should == :option
+      end
+
+      adapter.fire :hi, the: :option
+      called.should be_true
+    end
+  end
+
   describe "#say" do
     it 'accepts room, string, option' do
       adapter = Kubot::Adapter.new
