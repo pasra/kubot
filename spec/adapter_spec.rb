@@ -126,5 +126,50 @@ describe klass do
       adapter.say('room', 'hi').should == adapter
     end
   end
+
+  describe "#enter" do
+    it 'returns itself' do
+      adapter = klass.new
+      adapter.open
+      adapter.enter('room').should == adapter
+    end
+
+    it 'raises error if not opened' do
+      adapter = klass.new
+      expect { adapter.enter 'room' }.to raise_error
+      adapter.open
+      expect { adapter.enter 'room' }.to_not raise_error
+    end
+  end
+
+  describe "#leave" do
+    it 'returns itself' do
+      adapter = klass.new
+      adapter.open
+      adapter.leave('room').should == adapter
+    end
+
+    it 'raises error if not opened' do
+      adapter = klass.new
+      expect { adapter.leave 'room' }.to raise_error
+      adapter.open
+      expect { adapter.leave 'room' }.to_not raise_error
+    end
+  end
+
+  describe "#members_in" do
+    it 'raises error if not opened' do
+      adapter = klass.new
+      expect { adapter.members_in 'room' }.to raise_error
+      adapter.open
+      expect { adapter.members_in 'room' }.to_not raise_error
+    end
+
+    it 'returns array' do
+      adapter = klass.new
+      adapter.open
+      adapter.members_in('room').should be_a_kind_of(Array)
+    end
+  end
 end
 

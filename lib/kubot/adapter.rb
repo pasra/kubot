@@ -39,6 +39,21 @@ module Kubot
       self
     end
 
+    def enter(room)
+      raise NotOpened unless @opened
+      self
+    end
+
+    def leave(room)
+      raise NotOpened unless @opened
+      self
+    end
+
+    def members_in(room)
+      raise NotOpened unless @opened
+      []
+    end
+
     class NotOpened < StandardError; end
   end
 end
