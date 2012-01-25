@@ -31,7 +31,7 @@ describe Kubot::Adapter do
       called = 0
       adapter.hook do |event, obj|
         called += 1
-        event.should flag ? :close : :open
+        event.should == (flag ? :close : :open)
         flag = true
       end
       adapter.open; adapter.close
