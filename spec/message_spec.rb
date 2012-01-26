@@ -23,49 +23,49 @@ describe Kubot::Message do
   describe '.validate' do
     it 'calls .validator to get validator' do
       Kubot::Message.should_receive(:validator).with(:message)
-      Kubot.validate(:message, room: "hoge", message: "hi", name: "foo")
+      Kubot::Message.validate(:message, room: "hoge", message: "hi", name: "foo")
     end
 
     it 'for message requires :message, :name, :room on obj' do
-      Kubot.validate(:message,
+      Kubot::Message.validate(:message,
                      room: "hoge", message: "hi", name: "foo") \
            .should be_a_kind_of(Hash)
-      Kubot.validate(:message, message: "hi").should be_false
+      Kubot::Message.validate(:message, message: "hi").should be_false
     end
 
     it 'for :enter requires :name, :room' do
-      Kubot.validate(:enter, room: "hoge", name: "foo").should be_a_kind_of(Hash)
-      Kubot.validate(:enter, room: "hoge").should be_false
+      Kubot::Message.validate(:enter, room: "hoge", name: "foo").should be_a_kind_of(Hash)
+      Kubot::Message.validate(:enter, room: "hoge").should be_false
     end
 
     it 'for :leave requires :name, :room' do
-      Kubot.validate(:leave, room: "hoge", name: "foo").should be_a_kind_of(Hash)
-      Kubot.validate(:leave, room: "hoge").should be_false
+      Kubot::Message.validate(:leave, room: "hoge", name: "foo").should be_a_kind_of(Hash)
+      Kubot::Message.validate(:leave, room: "hoge").should be_false
     end
 
     it 'for :kick, requires :name, :room, :target' do
-      Kubot.validate(:kick, room: "hoge", name: "foo", target: "bar") \
+      Kubot::Message.validate(:kick, room: "hoge", name: "foo", target: "bar") \
            .should be_a_kind_of(Hash)
-      Kubot.validate(:kick, room: "hoge", name: "foo").should be_false
+      Kubot::Message.validate(:kick, room: "hoge", name: "foo").should be_false
     end
 
     it 'for :name, requires :from, :to' do
-      Kubot.validate(:name, from: "foo", to: "bar").should be_a_kind_of(Hash)
-      Kubot.validate(:name, from: "foo")
+      Kubot::Message.validate(:name, from: "foo", to: "bar").should be_a_kind_of(Hash)
+      Kubot::Message.validate(:name, from: "foo")
     end
 
     it 'makes modification at :message' do
-      a = Kubot.validate(:message, room: "hoge", message: "hi", name: "foo")
+      a = Kubot::Message.validate(:message, room: "hoge", message: "hi", name: "foo")
       a[:bot].should be_false
     end
   end
 
   describe '.new' do
     it 'validates and raises error if validation failed' do
-      Kubot::Message.validator(:new_hi) {|obj| obj  }
-      expect { Kubot::Message.new(a: :b) }.to_not raise_error
-      Kubot::Message.validator(:new_hi) { false }
-      expect { Kubot::Message.new(a: :b) }.to raise_error(Kubot::Message::InvalidMessage)
+      Kubot::Message.validator(:new_hi) {|obj| obj }
+      expect { Kubot::Message.new(:new_hi, a: :b) }.to_not raise_error
+      Kubot::Message.validator(:new_hi) {|obj| false }
+      expect { Kubot::Message.new(:new_hi, a: :b) }.to raise_error(Kubot::Message::InvalidMessage)
     end
 
     it 'validates and apply modifications' do
@@ -75,7 +75,7 @@ describe Kubot::Message do
 
     it 'calls .validate to validate' do
       o = {from: "foo", to: "bar"}
-      Kubot::Message.should_receive(:validate).with(:name, o)
+      Kubot::Message.should_receive(:validate).with(:name, o).and_return(true)
       expect { Kubot::Message.new(:name, o) }.to_not raise_error
     end
   end
