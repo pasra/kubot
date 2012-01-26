@@ -24,7 +24,8 @@ module Kubot
       ->(obj){ p keys; keys.all? {|key| obj.has_key?(key) } }
     }
 
-    validator(:message, &validator_help[:message, :name, :room])
+    m = validator_help[:message, :name, :room]
+    validator(:message) {|obj| m[obj] && obj.merge(bot: false) }
     validator(:enter, &validator_help[:name, :room])
     validator(:leave, &validator_help[:name, :room])
     validator(:kick, &validator_help[:name, :room, :target])
@@ -33,7 +34,6 @@ module Kubot
 
     def initialize(type, obj={})
       @type = type
-      p obj
       unless @obj = self.class.validate(type, obj)
         raise InvalidMessage
       end

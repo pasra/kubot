@@ -56,7 +56,7 @@ describe Kubot::Message do
 
     it 'makes modification at :message' do
       a = Kubot::Message.validate(:message, room: "hoge", message: "hi", name: "foo")
-      a[:bot].should be_false
+      a[:bot].should == false
     end
   end
 
