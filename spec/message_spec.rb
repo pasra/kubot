@@ -97,119 +97,29 @@ describe Kubot::Message do
   end
 
   describe '.match?' do
-    it 'returns true if match to specified condition(s)' do
-      mes = Kubot::Message.new(:name, from: "foo", to: "bar")
-      mes.match?(from: "foo").should be_true
+    it 'calls Kubot::Matcher#match?' do
+      o = {from: "foo", to: "bar"}
+      cond = {from: "foo"}
+      matcher = Kubot::Matcher.new(o)
+
+      Kubot::Matcher.should_receive(:new).with(o).and_return(matcher)
+      mes = Kubot::Message.new(:name, o)
+      matcher.should_receive(:match?).with([cond]).and_return(:woooo)
+      mes.match?(cond).should == :woooo
     end
+  end
 
-    describe 'conditions:' do
-      describe 'Regexp' do
-        it 'is true if the regexp matches to a message' do
-          mes = Kubot::Message.new(:message, room: "hoge", message: "hi", name: "foo")
-          mes.match?(/hi/).should be_true
-          mes.match?(/ho/).should be_false
-        end
+  describe '.match' do
+    it 'calls Kubot::Matcher#match' do
+      o = {from: "foo", to: "bar"}
+      cond = {from: "foo"}
+      matcher = Kubot::Matcher.new(o)
 
-        it 'is nil if the message does not include message' do
-          mes = Kubot::Message.new(:name, from: "foo", to: "bar")
-          mes.match?(/hi/).should be_nil
-        end
-      end
+      Kubot::Matcher.should_receive(:new).with(o).and_return(matcher)
+      mes = Kubot::Message.new(:name, o)
+      matcher.should_receive(:match).with([cond]).and_return(:woooo)
+      mes.match(cond).should == :woooo
 
-      describe 'String' do
-        it 'is true if the string equals to a message' do
-          mes = Kubot::Message.new(:message, room: "hoge", message: "hi", name: "foo")
-          mes.match?("hi").should be_true
-          mes.match?("h").should be_false
-        end
-
-        it 'is nil if the message does not include message' do
-          mes = Kubot::Message.new(:name, from: "foo", to: "bar")
-          mes.match?("hi").should be_nil
-        end
-      end
-
-      it 'is true if the any of conditions in arguments is true' do
-        mes = Kubot::Message.new(:message, room: "hoge", message: "hi", name: "foo")
-        mes.match?(/h/,/u/).should be_true
-        mes.match?("u","o").should be_false
-        mes.match?("hi","o").should be_true
-        mes.match?("ho",/h/).should be_true
-        mes.match?("ho",/n/).should be_false
-        mes.match?("ho",/n/, name: "foo").should be_true
-      end
-
-
-      describe 'Array' do
-        it 'is true if the any of conditions in array is true' do
-          mes = Kubot::Message.new(:message, room: "hoge", message: "hi", name: "foo")
-          mes.match?([/h/,/u/]).should be_true
-          mes.match?(["u","o"]).should be_false
-          mes.match?(["hi","o"]).should be_true
-          mes.match?(["ho",/h/]).should be_true
-          mes.match?(["ho",/n/]).should be_false
-          mes.match?(["ho",/n/, {name: "foo"}]).should be_true
-        end
-      end
-
-      describe 'Hash' do
-        describe 'key :any' do
-          it 'is true if the any of conditions in array is true' do
-            mes = Kubot::Message.new(:message, room: "hoge", message: "hi", name: "foo")
-            mes.match?(any: [/h/,/u/]).should be_true
-            mes.match?(any: ["u","o"]).should be_false
-            mes.match?(any: ["hi","o"]).should be_true
-            mes.match?(any: ["ho",/h/]).should be_true
-            mes.match?(any: ["ho",/n/]).should be_false
-            mes.match?(any: ["ho",/n/,{name: "foo"}]).should be_false
-          end
-        end
-
-        describe 'key :all' do
-          it 'is true if the all of conditions in array is true' do
-            mes = Kubot::Message.new(:message, room: "hoge", message: "hi", name: "foo")
-            mes.match?(all: [/h/,/i/]).should be_true
-            mes.match?(all: [/h/,/n/]).should be_false
-            mes.match?(all: ["hi","hi"]).should be_true
-            mes.match?(all: ["hi",/n/]).should be_false
-            mes.match?(all: ["hi",/h/]).should be_false
-            mes.match?(all: ["message",{name: "foo"}]).should be_false
-          end
-        end
-
-        describe 'other key' do
-          before do
-            @mes = Kubot::Message.new(:message, room: "hoge", message: "hi", name: "foo")
-          end
-
-          it 'is true if the value is String and the value equals to the obj[key]' do
-            @mes.match?(name: "foo").should be_true
-            @mes.match?(name: "bar").should be_false
-          end
-
-          it 'is true if the value is Regexp and the value matches to the obj[key]' do
-            @mes.match?(name: /f/).should be_true
-            @mes.match?(name: /u/).should be_false
-          end
-
-          it 'is true if the value is Array and the any conditions in array is true' do
-            @mes.match?(name: ["bar", "foo"]).should be_true
-            @mes.match?(name: ["bar", "hoge"]).should be_false
-            @mes.match?(name: ["bar", /fo/]).should be_true
-            @mes.match?(name: ["bar", /fu/]).should be_false
-          end
-        end
-
-        it 'is true if the any of condition in hash is true' do
-          mes = Kubot::Message.new(:message, room: "hoge", message: "hi", name: "foo")
-          mes.match?(name: "foo", message: "hi").should be_true
-          mes.match?(name: "foo", message: "hey").should be_true
-          mes.match?(name: "bar", message: "hey").should be_false
-          mes.match?(name: ["bar", "foo"], message: "hey").should be_true
-          mes.match?(name: "bar", message: /h/).should be_true
-          mes.match?(name: "bar", message: /n/).should be_false
-        end
-      end
     end
   end
 end

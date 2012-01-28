@@ -21,7 +21,7 @@ module Kubot
     end
 
     validator_help = ->(*keys) {
-      ->(obj){ p keys; keys.all? {|key| obj.has_key?(key) } }
+      ->(obj){ keys.all? {|key| obj.has_key?(key) } }
     }
 
     m = validator_help[:message, :name, :room]
