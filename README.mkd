@@ -38,10 +38,21 @@ Team Pasra
 
 ## License
 
+### CustomHash and CustomArray
+
 The following classes in the file "lib/kubot/config.rb" is public domain:
 
 * `CustomHash` from <https://gist.github.com/1668637>
 * `CustomArray` from <https://gist.github.com/1668637>
+
+### Matcher
+
+The following file is public domain:
+
+* `lib/kubot/matcher.rb` is modified version of <https://github.com/sorah/sandbox/blob/master/ruby/matcher/matcher.rb>
+* `spec/matcher_spec.rb` is modified version of <https://github.com/sorah/sandbox/blob/master/ruby/matcher/matcher_spec.rb>
+
+### Others
 
 Files without any notice about license, the following license is applied:
 
