@@ -104,7 +104,7 @@ describe Kubot::Message do
 
       Kubot::Matcher.should_receive(:new).with(o).and_return(matcher)
       mes = Kubot::Message.new(:name, o)
-      matcher.should_receive(:match?).with([cond]).and_return(:woooo)
+      matcher.should_receive(:match?).with(cond).and_return(:woooo)
       mes.match?(cond).should == :woooo
     end
   end
@@ -117,9 +117,8 @@ describe Kubot::Message do
 
       Kubot::Matcher.should_receive(:new).with(o).and_return(matcher)
       mes = Kubot::Message.new(:name, o)
-      matcher.should_receive(:match).with([cond]).and_return(:woooo)
+      matcher.should_receive(:match).with(cond).and_return(:woooo)
       mes.match(cond).should == :woooo
-
     end
   end
 end

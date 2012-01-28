@@ -1,3 +1,5 @@
+require_relative './matcher'
+
 module Kubot
   class Message
     @@validators = {}
@@ -37,8 +39,13 @@ module Kubot
       unless @obj = self.class.validate(type, obj)
         raise InvalidMessage
       end
+      @matcher = Kubot::Matcher.new(obj)
     end
+
     attr_reader :type
+
+    def match?(*args); @matcher.match? *args; end
+    def match(*args);  @matcher.match *args; end
 
     def method_missing(name, *args)
       if /^(.+)\?$/ =~ name
