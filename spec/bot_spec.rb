@@ -9,7 +9,6 @@ end
 describe Kubot::Bot do
   before :each do
     @bot = Class.new(Kubot::Bot)
-    @bot.send :public, :define_method
   end
 
   describe '.respond' do
@@ -18,12 +17,14 @@ describe Kubot::Bot do
       @bot.respond("hi"){ count += 1 }
 
       bot = @bot.new
-      message = valid_message["hi"]
 
-      message.should_receive(:match).with("hi").and_return(["hi"])
-      bot.fire message
-      message.should_receive(:match).with("hi").and_return(false)
-      bot.fire message
+      message_a = valid_message["hi"]
+      message_b = valid_message["ho"]
+
+      message_a.should_receive(:match).with("hi").and_return(["hi"])
+      bot.fire message_a
+      message_b.should_receive(:match).with("hi").and_return(false)
+      bot.fire message_b
 
       count.should == 1
     end
@@ -32,9 +33,9 @@ describe Kubot::Bot do
   describe '#fire' do
     it 'calls responders that matches to conditions by .respond' do
       count_a, count_b, count_c = 0, 0, 0
-      ba,bb = nil,nil
+      ba,bb,bc = nil,nil,nil
 
-      @bot.respond("hi") {|a,b| ba,bb=a,b; count_a += 1 }
+      @bot.respond("hi") {|a,b,c| ba,bb,bc=a,b,c; count_a += 1 }
       @bot.respond(/h/)  { count_b += 1 }
       @bot.respond(/i/)  { count_c += 1 }
 
@@ -59,11 +60,12 @@ describe Kubot::Bot do
       bot.fire message_c
 
       count_a.should == 1
-      count_b.should == 1
-      count_c.should == 1
+      count_b.should == 2
+      count_c.should == 2
 
-      ba.should == ["hi"]
-      bb.should == bot
+      ba.should == bot
+      bb.should == message_a
+      bc.should == ["hi"]
     end
 
     it 'calls on_* method' do
@@ -98,8 +100,8 @@ describe Kubot::Bot do
 
       @bot.reset
 
-      @bot.respond("hi"){ count_aa += 1}
-      @bot.respond("hi"){ count_ab += 1}
+      @bot.respond("hi"){ count_ba += 1}
+      @bot.respond("hi"){ count_bb += 1}
 
       bot = @bot.new
       bot.fire valid_message["hi"]
