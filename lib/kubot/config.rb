@@ -3,8 +3,16 @@ require 'yaml'
 module Kubot
   class Config
     DEFAULT = {}
-    def initialize(filename)
-      @config = CustomHash[YAML.load_file(filename)]
+    def initialize(o)
+      case o
+      when String
+        obj = YAML.load_file(o)
+      when Hash
+        obj = o
+      else
+        raise TypeError
+      end
+      @config = CustomHash[obj]
     end
 
     def method_missing(name,*args)
