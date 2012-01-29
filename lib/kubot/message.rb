@@ -39,7 +39,7 @@ module Kubot
       unless @obj = self.class.validate(type, obj)
         raise InvalidMessage
       end
-      @matcher = Kubot::Matcher.new(obj)
+      @matcher = Kubot::Matcher.new(obj, :message)
     end
 
     attr_reader :type
