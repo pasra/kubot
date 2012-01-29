@@ -14,6 +14,14 @@ module Kubot
         @responders = []
         self
       end
+
+      def inherited(klass)
+        (@bots ||= []) << klass
+      end
+
+      def bots
+        @bots ||= []
+      end
     end
 
     def initialize(options={},config={})

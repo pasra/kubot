@@ -124,4 +124,12 @@ describe Kubot::Bot do
       bot.db.should == :hi
     end
   end
+
+  describe '.bots' do
+    it 'returns array of bots that inherited this class' do
+      klass = Class.new(Kubot::Bot)
+      Kubot::Bot.bots.should be_a_kind_of(Array)
+      Kubot::Bot.bots.should include(klass)
+    end
+  end
 end
