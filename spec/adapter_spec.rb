@@ -5,7 +5,7 @@ describe Kubot::Adapter do
   describe ".new" do
     it 'accepts one option hash' do
       expect { described_class.new(foo: :bar) }.to_not raise_error
-      expect { klass.new() }.to_not raise_error
+      expect { described_class.new() }.to_not raise_error
     end
   end
 
