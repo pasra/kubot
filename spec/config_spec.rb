@@ -7,30 +7,30 @@ describe Kubot::Config do
   describe ".new" do
     context "with String" do
       it "loads from yaml file" do
-        expect { Kubot::Config.new(sample) }.to_not raise_error
+        expect { described_class.new(sample) }.to_not raise_error
       end
     end
 
     context 'with Hash' do
       it "uses that hash" do
         a = nil
-        expect { a = Kubot::Config.new(a: :b) }.to_not raise_error
+        expect { a = described_class.new(a: :b) }.to_not raise_error
         a.a.should == :b
       end
     end
 
     it 'raises error unless passed object is String or Hash' do
-      expect { Kubot::Config.new(Time.now) }.to raise_error(TypeError)
+      expect { described_class.new(Time.now) }.to raise_error(TypeError)
     end
   end
 
   it "keys converted into Symbols" do
-    c = Kubot::Config.new(sample)
+    c = described_class.new(sample)
     c[:a].should == "hi"
   end
 
   it "keys converted recursively" do
-    c = Kubot::Config.new(sample)
+    c = described_class.new(sample)
     c[:b][:c][:foo].should == "bar"
     c[:b][:c][:hoge].should == "huga"
     c[:b][:d][0].should == "a"
@@ -44,7 +44,7 @@ describe Kubot::Config do
   end
 
   it "can be accesable by method" do
-    c = Kubot::Config.new(sample)
+    c = described_class.new(sample)
     c.b.c.foo.should == "bar"
     c.b.c.hoge.should == "huga"
     c.b.d[0].should == "a"

@@ -10,13 +10,13 @@ require 'kubot/matcher'
 describe Kubot::Matcher do
   describe ".new" do
     it 'accepts target object and default key for matching' do
-      expect { Kubot::Matcher.new(hi: :hey) }.to_not raise_error
-      expect { Kubot::Matcher.new({hi: :hey}, :hi) }.to_not raise_error
+      expect { described_class.new(hi: :hey) }.to_not raise_error
+      expect { described_class.new({hi: :hey}, :hi) }.to_not raise_error
     end
   end
 
   describe "#match?" do
-    before { @matcher = Kubot::Matcher.new(foo: "bar", bar: "foo") }
+    before { @matcher = described_class.new(foo: "bar", bar: "foo") }
 
     it 'accepts multiple arguments' do
       expect { @matcher.match?("baa","bar") }.to_not raise_error
@@ -39,7 +39,7 @@ describe Kubot::Matcher do
   end
 
   describe '#match' do
-    before { @matcher = Kubot::Matcher.new(foo: "bar", bar: "foo") }
+    before { @matcher = described_class.new(foo: "bar", bar: "foo") }
 
     it 'accepts multiple arguments' do
       expect { @matcher.match("baa","bar") }.to_not raise_error
@@ -168,7 +168,7 @@ describe Kubot::Matcher do
       end
 
       it "checks equal to specified value if the hash only has :raw key" do
-        matcher = Kubot::Matcher.new(foo: [1,2,3])
+        matcher = described_class.new(foo: [1,2,3])
         matcher.match(foo: {raw: [1,2,3]}).should be_a_kind_of(Array)
         matcher.match(foo: {raw: [1,2,3], foo: "bar"}).should be_false
       end
