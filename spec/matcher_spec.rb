@@ -24,9 +24,9 @@ describe Kubot::Matcher do
     end
 
     it 'calls #match' do
-      should_receive(:match).with(["bar"]).and_return([true])
+      subject.should_receive(:match).with(["bar"]).and_return([true])
       should be_match("bar")
-      should_receive(:match).with(["bar","baz"]).and_return([true])
+      subject.should_receive(:match).with(["bar","baz"]).and_return([true])
       should be_match("bar", "baz")
     end
 
