@@ -132,4 +132,15 @@ describe Kubot::Bot do
       Kubot::Bot.bots.should include(klass)
     end
   end
+
+  describe '.bots_diff' do
+    it 'yields and return diff of .bots before yield and after' do
+      ary_ = ('a'..'z').map(&:to_sym)
+      ary = []
+      Kubot::Bot.stub(:bots) { ary << ary_.shift }
+
+      flag = false
+      Kubot::Bot.bots_diff { flag = true }.should == [:b]
+    end
+  end
 end

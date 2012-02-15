@@ -22,6 +22,12 @@ module Kubot
       def bots
         @bots ||= []
       end
+
+      def bots_diff
+        a = bots.dup
+        yield
+        bots-a
+      end
     end
 
     def initialize(options={},config={})
