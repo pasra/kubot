@@ -119,8 +119,8 @@ describe Kubot::Bot do
 
   describe '.new' do
     it 'accepts option and config' do
-      bot = @bot.new({foo: :bar, db: :hi},{bar: :foo})
-      bot.config.should == {bar: :foo}
+      bot = @bot.new({bar: :foo, db: :hi}, {foo: :bar})
+      bot.config.should == {foo: :bar}
       bot.db.should == :hi
     end
   end
