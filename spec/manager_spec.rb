@@ -8,12 +8,13 @@ require_relative Kubot::MOCK_PATH+"/exist"
 
 describe Kubot::Manager do
   before :each do
-    FooBot.reset if defined?(FooBot)
-    @manager = Kubot::Manager.new(Kubot::MOCK_LOAD_PATH)
+    Kernel.stub(:load)
   end
 
+  subject { Kubot::Manager.new(Kubot::MOCK_LOAD_PATH) }
+
   it 'has accessor for load path' do
-    @manager.load_path.should == Kubot::MOCK_LOAD_PATH
+    subject.load_path.should == Kubot::MOCK_LOAD_PATH
   end
 
   describe '.new' do
@@ -24,33 +25,33 @@ describe Kubot::Manager do
 
   describe '#load' do
     it 'accepts bot name, config, option' do
-      expect { @manager.load(:foo) }.to_not raise_error
-      expect { @manager.load(:foo, {the: :config}) }.to_not raise_error
-      expect { @manager.load(:foo, {the: :config}, {db: nil}) }.to_not raise_error
+      expect { subject.load(:foo) }.to_not raise_error
+      expect { subject.load(:foo, {the: :config}) }.to_not raise_error
+      expect { subject.load(:foo, {the: :config}, {db: nil}) }.to_not raise_error
     end
 
     it 'finds bot using load_path and start it' do
       config= {the: :config}
       option= {db: nil}
       Kernel.should_receive(:load).and_return { FooBot.should_receive(:new).with(config, option).and_return(nil) }
-      @manager.load(:foo, config, option)
+      subject.load(:foo, config, option)
     end
 
     it 'detects bot using bots_diff' do
       Kubot::Bot.should_receive(:bots_diff).and_return([FooBot])
       FooBot.should_receive(:new).and_return(FooBot.new)
-      @manager.load(:foo)
+      subject.load(:foo)
     end
 
     it 'reloads bot using #reload if it has already loaded' do
-      @manager.should_not_receive(:reload)
-      @manager.load(:foo, {the: :config})
-      @manager.should_receive(:reload).with(:foo, {the: :config}).and_return(@manager)
-      @manager.load(:foo, {the: :config})
+      should_not_receive(:reload)
+      subject.load(:foo, {the: :config})
+      should_receive(:reload).with(:foo, {the: :config}).and_return(subject)
+      subject.load(:foo, {the: :config})
     end
 
     it 'raises error unless bot file is found' do
-      expect { @manager.load(:this_is_not_exist) }.to raise_error(Kubot::Manager::BotNotFound)
+      expect { subject.load(:this_is_not_exist) }.to raise_error(Kubot::Manager::BotNotFound)
     end
 
     it "doesn't share Bot instances" do
@@ -58,7 +59,7 @@ describe Kubot::Manager do
       bot = FooBot.new
       Kubot::Bot.stub(:bots_diff) { [FooBot] }
       FooBot.should_receive(:new).and_return { bot }
-      @manager.load(:foo)
+      subject.load(:foo)
       FooBot.should_receive(:new).and_return { bot }
       another.load(:foo)
     end
@@ -68,11 +69,11 @@ describe Kubot::Manager do
       bot_b = EbBot.new
       Kubot::Bot.stub(:bots_diff) { [EaBot] }
       EaBot.should_receive(:new).and_return(bot_a.shift)
-      @manager.load(:exist)
+      subject.load(:exist)
       Kubot::Bot.stub(:bots_diff) { [EbBot] }
       EaBot.should_receive(:new).and_return(bot_a.shift)
       EbBot.should_receive(:new).and_return(bot_b)
-      @manager.load(:exist)
+      subject.load(:exist)
     end
 
     context 'with multiple bots in single file' do
@@ -83,7 +84,7 @@ describe Kubot::Manager do
           klass.should_receive(:new).and_return(klass.new)
         end
 
-        @manager.load(:multi)
+        subject.load(:multi)
       end
     end
   end
@@ -95,25 +96,23 @@ describe Kubot::Manager do
 
     it 'calls Bot#finalize to specified bot' do
       bot = FooBot.new
-      Kernel.stub(:load){}
       Kubot::Bot.stub(:bots_diff) { [FooBot] }
       FooBot.stub(:new){bot}
 
-      @manager.load(:foo)
+      subject.load(:foo)
 
       bot.should_receive(:finalize)
-      @manager.unload(:foo)
+      subject.unload(:foo)
     end
 
     it "manages loaded bots using class variable, but doesn't share Bot instances" do
       bot_a, bot_b = FooBot.new, FooBot.new
       another = Kubot::Manager.new(Kubot::MOCK_LOAD_PATH)
 
-      Kernel.stub(:load){}
       Kubot::Bot.stub(:bots_diff) { [FooBot] }
 
       FooBot.stub(:new){ bot_a }
-      @manager.load(:foo)
+      subject.load(:foo)
 
       FooBot.stub(:new){ bot_b }
       another.load(:foo)
@@ -121,7 +120,6 @@ describe Kubot::Manager do
 
     context 'with multiple bots in single file' do
       it 'unloads all bots in a file' do
-        Kernel.stub(:load){}
         Kubot::Bot.stub(:bots_diff) { [MaBot, MbBot] }
 
         [MaBot, MbBot].each do |klass|
@@ -130,25 +128,25 @@ describe Kubot::Manager do
           klass.should_receive(:new).and_return(bot)
         end
 
-        @manager.load(:multi)
-        @manager.unload(:multi)
+        subject.load(:multi)
+        subject.unload(:multi)
       end
     end
   end
 
   describe '#reload' do
     it 'calls #unload first then call #load' do
-      @manager.should_receive(:unload).with(:not_exist).ordered
-      @manager.should_receive(:load).with(:not_exist).ordered
+      should_receive(:unload).with(:not_exist).ordered
+      should_receive(:load).with(:not_exist).ordered
 
-      @manager.reload(:not_exist)
+      subject.reload(:not_exist)
     end
 
     context 'when calling #unload' do
       it 'ignores Kubot::Manager::BotNotLoaded error' do
-        @manager.should_receive(:unload) { raise Kubot::Manager::BotNotLoaded }
-        @manager.stub(:load) {}
-        expect { @manager.reload(:foo) }.to_not raise_error
+        should_receive(:unload) { raise Kubot::Manager::BotNotLoaded }
+        subject.stub(:load) {}
+        expect { subject.reload(:foo) }.to_not raise_error
       end
     end
   end
@@ -158,22 +156,26 @@ describe Kubot::Manager do
       @tmpdir = Dir.mktmpdir
       FileUtils.cp("#{Kubot::MOCK_PATH}/reload_a.rb", @tmpdir)
       FileUtils.cp("#{Kubot::MOCK_PATH}/reload_b.rb", @tmpdir)
-      @manager = Kubot::Manager.new([@tmpdir])
     end
 
-    it 'calls #load for all plugins which newer than when loaded before' do
-      @manager.load(:reload_a)
-      @manager.load(:reload_b)
+    subject { Kubot::Manager.new([@tmpdir]) }
 
-      @manager.should_not_receive(:load)
-      @manager.reload
+    it 'calls #load for all plugins which newer than when loaded before' do
+      subject.load(:reload_a)
+      subject.load(:reload_b)
+
+      should_not_receive(:load)
+      should_not_receive(:unload)
+      subject.reload
 
       FileUtils.touch "#{@tmpdir}/reload_a.rb"
       FileUtils.touch "#{@tmpdir}/reload_b.rb"
 
-      @manager.should_receive(:load).with(:reload_a)
-      @manager.should_receive(:load).with(:reload_b)
-      @manager.reload
+      should_receive(:unload).with(:reload_a)
+      should_receive(:unload).with(:reload_b)
+      should_receive(:load).with(:reload_a)
+      should_receive(:load).with(:reload_b)
+      subject.reload
     end
 
     after :each do
@@ -188,12 +190,12 @@ describe Kubot::Manager do
       bar = BarBot.new
       BarBot.stub(:new){bar}
 
-      @manager.load(:foo)
-      @manager.load(:bar)
+      subject.load(:foo)
+      subject.load(:bar)
 
       foo.should_receive(:finalize)
       bar.should_receive(:finalize)
-      @manager.unload_all
+      subject.unload_all
     end
   end
 end
