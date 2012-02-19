@@ -7,13 +7,8 @@ require_relative Kubot::MOCK_PATH+"/multi"
 require_relative Kubot::MOCK_PATH+"/exist"
 
 describe Kubot::Manager do
-  #before :all do
-  #  @mockdir = Dir.mktmpdir
-  #end
-
   before :each do
     FooBot.reset if defined?(FooBot)
-    #@manager = Kubot::Manager.new([@mockdir]+Kubot::MOCK_LOAD_PATH)
     @manager = Kubot::Manager.new(Kubot::MOCK_LOAD_PATH)
   end
 
